@@ -68,12 +68,6 @@ resources/
 composer create-project laravel/laravel Laravel12_Health
 ```
 
-Move into project directory:
-
-```bash
-cd Laravel12_Health
-```
-
 Start development server:
 
 ```bash
