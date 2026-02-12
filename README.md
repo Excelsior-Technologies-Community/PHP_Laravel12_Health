@@ -148,21 +148,35 @@ app/Providers/AppServiceProvider.php
 Update the `boot()` method:
 
 ```php
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
 use Spatie\Health\Facades\Health;
 use Spatie\Health\Checks\Checks\DatabaseCheck;
 use Spatie\Health\Checks\Checks\CacheCheck;
 use Spatie\Health\Checks\Checks\DebugModeCheck;
 use Spatie\Health\Checks\Checks\EnvironmentCheck;
 
-public function boot(): void
+class AppServiceProvider extends ServiceProvider
 {
-    Health::checks([
-        DatabaseCheck::new(),
-        CacheCheck::new(),
-        DebugModeCheck::new(),
-        EnvironmentCheck::new(),
-    ]);
+    public function register(): void
+    {
+        //
+    }
+
+    public function boot(): void
+    {
+        Health::checks([
+            DatabaseCheck::new(),
+            CacheCheck::new(),
+            DebugModeCheck::new(),
+            EnvironmentCheck::new(),
+        ]);
+    }
 }
+
 ```
 
 ---
@@ -206,19 +220,22 @@ routes/web.php
 ```
 
 ```php
+<?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HealthController;
 use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
 use Spatie\Health\Http\Controllers\HealthCheckResultsController;
 
-// Custom Blade Dashboard
+// Blade Dashboard
 Route::get('/health', [HealthController::class, 'index']);
 
-// JSON Endpoint
+// JSON endpoint (used by JS)
 Route::get('/health-json', HealthCheckJsonResultsController::class);
 
-// Optional Spatie Default Dashboard
+// Optional: Spatie default dashboard
 Route::get('/health-dashboard', HealthCheckResultsController::class);
+
 ```
 
 ---
