@@ -2,6 +2,7 @@
 
 ![Laravel](https://img.shields.io/badge/Laravel-12.x-red)
 ![PHP](https://img.shields.io/badge/PHP-8.2+-blue)
+![Spatie Health](https://img.shields.io/badge/Spatie-Laravel%20Health-4CAF50)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ---
