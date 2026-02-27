@@ -1,59 +1,418 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+#  PHP_Laravel12_Healthh
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+![Laravel](https://img.shields.io/badge/Laravel-12.x-red)
+![PHP](https://img.shields.io/badge/PHP-8.2+-blue)
+![Spatie Health](https://img.shields.io/badge/Spatie-Laravel%20Health-4CAF50)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+##  Overview
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**PHP_Laravel12_Health** is a Laravel 12 project that integrates the Spatie Laravel Health package to monitor application health.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+It provides:
 
-## Learning Laravel
+* A custom Blade-based health dashboard
+* A JSON health endpoint
+* The default Spatie health dashboard
+* Auto-refreshing UI for real-time monitoring
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+This setup is suitable for development, staging, and production environments.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+##  Features
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+*  Database Health Check
+*  Cache Health Check
+*  Debug Mode Verification
+*  Environment Verification
+*  Custom Dark-Themed Blade Dashboard
+*  JSON Health Endpoint
+*  Auto-Refreshing UI (Every 5 Seconds)
+*  Optional Spatie Default Dashboard
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+##  Folder Structure 
 
-## Contributing
+```
+app/
+ ├── Http/
+ │    └── Controllers/
+ │         └── HealthController.php
+ │
+ ├── Providers/
+ │    └── AppServiceProvider.php
+ │
+routes/
+ └── web.php
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+resources/
+ └── views/
+      └── health.blade.php
+```
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#  Installation & Setup Guide
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 1️ Project Installation
 
-## License
+### Step 1: Create New Laravel 12 Project
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+composer create-project laravel/laravel Laravel12_Health
+```
+
+Start development server:
+
+```bash
+php artisan serve
+```
+
+Open in browser:
+
+```
+http://127.0.0.1:8000
+```
+
+---
+
+## 2️ Environment Configuration
+
+Open the `.env` file and configure:
+
+```env
+APP_NAME=Laravel
+APP_ENV=production
+APP_KEY=Your_Key
+APP_DEBUG=false
+APP_URL=http://localhost
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Clear configuration cache:
+
+```bash
+php artisan config:clear
+```
+
+---
+
+## 3️ Install Spatie Laravel Health Package
+
+Install package:
+
+```bash
+composer require spatie/laravel-health
+```
+
+Publish configuration:
+
+```bash
+php artisan vendor:publish --tag="health-config"
+```
+
+Publish migrations:
+
+```bash
+php artisan vendor:publish --tag="health-migrations"
+```
+
+Run migrations:
+
+```bash
+php artisan migrate
+```
+
+---
+
+## 4️ Register Health Checks
+
+Open:
+
+```
+app/Providers/AppServiceProvider.php
+```
+
+Update the `boot()` method:
+
+```php
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+use Spatie\Health\Facades\Health;
+use Spatie\Health\Checks\Checks\DatabaseCheck;
+use Spatie\Health\Checks\Checks\CacheCheck;
+use Spatie\Health\Checks\Checks\DebugModeCheck;
+use Spatie\Health\Checks\Checks\EnvironmentCheck;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        //
+    }
+
+    public function boot(): void
+    {
+        Health::checks([
+            DatabaseCheck::new(),
+            CacheCheck::new(),
+            DebugModeCheck::new(),
+            EnvironmentCheck::new(),
+        ]);
+    }
+}
+
+```
+
+---
+
+## 5️ Create Health Controller
+
+Run:
+
+```bash
+php artisan make:controller HealthController
+```
+
+File:
+
+```
+app/Http/Controllers/HealthController.php
+```
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+class HealthController extends Controller
+{
+    public function index()
+    {
+        return view('health');
+    }
+}
+```
+
+---
+
+## 6️ Define Routes
+
+Open:
+
+```
+routes/web.php
+```
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HealthController;
+use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
+use Spatie\Health\Http\Controllers\HealthCheckResultsController;
+
+// Blade Dashboard
+Route::get('/health', [HealthController::class, 'index']);
+
+// JSON endpoint (used by JS)
+Route::get('/health-json', HealthCheckJsonResultsController::class);
+
+// Optional: Spatie default dashboard
+Route::get('/health-dashboard', HealthCheckResultsController::class);
+
+```
+
+---
+
+## 7️ Create Blade Dashboard
+
+Create file:
+
+resources/views/health.blade.php
+```
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Laravel Health Dashboard</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #fff;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .badge {
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 20px 0;
+        }
+
+        .badge-ok {
+            background: #16a34a;
+        }
+
+        .badge-failed {
+            background: #dc2626;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ok {
+            background: #16a34a;
+            padding: 6px 15px;
+            border-radius: 20px;
+        }
+
+        .failed {
+            background: #dc2626;
+            padding: 6px 15px;
+            border-radius: 20px;
+        }
+
+        .summary {
+            font-size: 13px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>💙 Laravel Health Dashboard</h1>
+
+    <div id="overall"></div>
+    <div id="results"></div>
+
+</div>
+
+<script>
+function loadHealth() {
+    fetch('/health-json') 
+        .then(res => res.json())
+        .then(data => {
+
+            let results = data.checkResults;
+            let hasFailure = results.some(r => r.status !== 'ok');
+
+            let overall = document.getElementById('overall');
+            overall.innerHTML = `
+                <div style="text-align:center;">
+                    <span class="badge ${hasFailure ? 'badge-failed' : 'badge-ok'}">
+                        ${hasFailure ? 'FAILED' : 'OK'}
+                    </span>
+                </div>
+            `;
+
+            let container = document.getElementById('results');
+            container.innerHTML = '';
+
+            results.forEach(result => {
+                container.innerHTML += `
+                    <div class="card">
+                        <div>
+                            <strong>${result.label}</strong>
+                            <div class="summary">${result.shortSummary}</div>
+                        </div>
+                        <div class="${result.status === 'ok' ? 'ok' : 'failed'}">
+                            ${result.status.toUpperCase()}
+                        </div>
+                    </div>
+                `;
+            });
+        });
+}
+
+loadHealth();
+setInterval(loadHealth, 5000);
+</script>
+
+</body>
+</html>
+
+```
+---
+
+## 8️ Final URLs
+
+### 🔹 Custom Dashboard
+
+```
+http://127.0.0.1:8000/health
+```
+<img width="1049" height="601" alt="Screenshot 2026-02-12 160315" src="https://github.com/user-attachments/assets/0398906d-f8c2-4008-93c2-26567a3a4537" />
+
+
+### 🔹 JSON Endpoint
+
+```
+http://127.0.0.1:8000/health-json
+```
+<img width="1919" height="110" alt="Screenshot 2026-02-12 160350" src="https://github.com/user-attachments/assets/30a87593-2352-4074-a23a-8920b52c93a1" />
+
+
+### 🔹 Default Spatie Dashboard
+
+```
+http://127.0.0.1:8000/health-dashboard
+```
+<img width="1416" height="507" alt="Screenshot 2026-02-12 160327" src="https://github.com/user-attachments/assets/2d708763-31d2-488c-885c-4d47b0a4823f" />
+
+---
+
+#  Final Result
+
+The application now includes:
+
+* Database health check
+* Cache health check
+* Debug mode verification
+* Environment verification
+* Custom Blade dashboard
+* JSON endpoint
+* Auto-refreshing UI
+
+---
+
+
+
+
