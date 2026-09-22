@@ -5,13 +5,13 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
+    <meta
+        name="viewport"
         content="width=device-width, initial-scale=1.0">
 
     <title>Health Incidents</title>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
@@ -60,9 +60,19 @@
             margin-bottom: 20px;
         }
 
+        .filter-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(200px, 1fr));
+
+            gap: 10px;
+        }
+
+        input,
         select,
         button {
-            padding: 9px 12px;
+            width: 100%;
+            padding: 10px 12px;
             border: 1px solid #fed7aa;
             border-radius: 6px;
         }
@@ -71,6 +81,16 @@
             background: #431407;
             color: white;
             cursor: pointer;
+        }
+
+        .export {
+            display: inline-block;
+            text-decoration: none;
+            background: #16a34a;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 7px;
+            margin-top: 12px;
         }
 
         .stats {
@@ -86,7 +106,7 @@
             background: white;
             padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
         }
 
         .stat-title {
@@ -162,290 +182,383 @@
             text-decoration: none;
             color: #431407;
         }
-
     </style>
 
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <h1>🚨 Health Incident & Failure Log</h1>
+        <h1>🚨 Health Incident & Failure Log</h1>
 
-    <div class="subtitle">
-        Failed and warning health checks detected by Spatie Health
-    </div>
+        <div class="subtitle">
+            Failed and warning health checks detected by Spatie Health
+        </div>
 
-    <div class="navigation">
 
-        <a href="/health">
-            🏠 Current Health
-        </a>
+        <div class="navigation">
 
-        <a href="/health-history">
-            📊 History
-        </a>
+            <a href="/health">
+                🏠 Current Health
+            </a>
 
-        <a href="/health-incidents">
-            🚨 Incidents
-        </a>
+            <a href="/health-history">
+                📊 History
+            </a>
 
-        <a href="/health-system">
-            🖥️ System Monitor
-        </a>
+            <a href="/health-incidents">
+                🚨 Incidents
+            </a>
 
-    </div>
+            <a href="/health-system">
+                🖥️ System Monitor
+            </a>
 
-    <div class="filter">
+        </div>
 
-        <form method="GET"
-            action="/health-incidents">
 
-            <label>
-                Incident Period:
-            </label>
+        {{-- Filters --}}
 
-            <select name="days">
+        <div class="filter">
 
-                <option value="1"
-                    {{ $days == 1 ? 'selected' : '' }}>
-                    Last 1 Day
-                </option>
+            <form
+                method="GET"
+                action="{{ route('health.incidents') }}">
 
-                <option value="3"
-                    {{ $days == 3 ? 'selected' : '' }}>
-                    Last 3 Days
-                </option>
+                <div class="filter-grid">
 
-                <option value="5"
-                    {{ $days == 5 ? 'selected' : '' }}>
-                    Last 5 Days
-                </option>
+                    <div>
 
-                <option value="7"
-                    {{ $days == 7 ? 'selected' : '' }}>
-                    Last 7 Days
-                </option>
+                        <label>
+                            Period
+                        </label>
 
-                <option value="30"
-                    {{ $days == 30 ? 'selected' : '' }}>
-                    Last 30 Days
-                </option>
+                        <select name="days">
 
-            </select>
+                            @foreach([1, 3, 5, 7, 30] as $period)
 
-            <button type="submit">
-                Apply
-            </button>
+                            <option
+                                value="{{ $period }}"
+                                {{ $days == $period ? 'selected' : '' }}>
 
-        </form>
+                                Last {{ $period }} Day{{ $period > 1 ? 's' : '' }}
 
-    </div>
+                            </option>
 
-    <div class="stats">
+                            @endforeach
 
-        <div class="stat">
+                        </select>
 
-            <div class="stat-title">
-                Total Incidents
+                    </div>
+
+
+                    <div>
+
+                        <label>
+                            Search
+                        </label>
+
+                        <input
+                            type="text"
+                            name="search"
+                            value="{{ $search }}"
+                            placeholder="Search incidents...">
+
+                    </div>
+
+
+                    <div>
+
+                        <label>
+                            Status
+                        </label>
+
+                        <select name="status">
+
+                            <option
+                                value="all"
+                                {{ $status === 'all' ? 'selected' : '' }}>
+
+                                All Incidents
+
+                            </option>
+
+                            <option
+                                value="failed"
+                                {{ $status === 'failed' ? 'selected' : '' }}>
+
+                                Failed Only
+
+                            </option>
+
+                            <option
+                                value="warning"
+                                {{ $status === 'warning' ? 'selected' : '' }}>
+
+                                Warnings Only
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div>
+
+                        <label>
+                            &nbsp;
+                        </label>
+
+                        <button type="submit">
+                            🔎 Apply Filters
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+
+            <a
+                class="export"
+                href="{{ route('health.incidents.export', ['days' => $days]) }}">
+
+                📥 Export Incidents CSV
+
+            </a>
+
+        </div>
+
+
+        {{-- Statistics --}}
+
+        <div class="stats">
+
+            <div class="stat">
+
+                <div class="stat-title">
+                    Total Incidents
+                </div>
+
+                <div class="stat-value">
+                    {{ $totalIncidents }}
+                </div>
+
             </div>
 
-            <div class="stat-value">
-                {{ $totalIncidents }}
+
+            <div class="stat">
+
+                <div class="stat-title">
+                    Failed Checks
+                </div>
+
+                <div class="stat-value">
+                    {{ $failedIncidents }}
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-title">
+                    Warnings
+                </div>
+
+                <div class="stat-value">
+                    {{ $warningIncidents }}
+                </div>
+
             </div>
 
         </div>
 
-        <div class="stat">
 
-            <div class="stat-title">
-                Failed Checks
-            </div>
+        {{-- Most affected --}}
 
-            <div class="stat-value">
-                {{ $failedIncidents }}
-            </div>
+        <div class="section">
+
+            <h2>
+                🔥 Most Affected Health Checks
+            </h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Health Check
+                        </th>
+
+                        <th>
+                            Incidents
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @forelse($mostAffectedChecks as $check)
+
+                    <tr>
+
+                        <td>
+                            {{ $check->check_label }}
+                        </td>
+
+                        <td>
+                            {{ $check->incidents }}
+                        </td>
+
+                    </tr>
+
+                    @empty
+
+                    <tr>
+
+                        <td
+                            colspan="2"
+                            class="empty">
+
+                            No incidents detected.
+
+                        </td>
+
+                    </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
 
         </div>
 
-        <div class="stat">
 
-            <div class="stat-title">
-                Warnings
-            </div>
+        {{-- Incident Log --}}
 
-            <div class="stat-value">
-                {{ $warningIncidents }}
-            </div>
+        <div class="section">
 
-        </div>
+            <h2>
+                🚨 Incident Log
+            </h2>
 
-    </div>
+            <table>
 
-    <div class="section">
+                <thead>
 
-        <h2>🔥 Most Affected Health Checks</h2>
+                    <tr>
 
-        <table>
+                        <th>
+                            Check
+                        </th>
 
-            <thead>
+                        <th>
+                            Status
+                        </th>
 
-            <tr>
+                        <th>
+                            Summary
+                        </th>
 
-                <th>
-                    Health Check
-                </th>
+                        <th>
+                            Notification
+                        </th>
 
-                <th>
-                    Incidents
-                </th>
+                        <th>
+                            Time
+                        </th>
 
-            </tr>
+                    </tr>
 
-            </thead>
+                </thead>
 
-            <tbody>
 
-            @forelse($mostAffectedChecks as $check)
+                <tbody>
 
-                <tr>
+                    @forelse($incidents as $incident)
 
-                    <td>
-                        {{ $check->check_label }}
-                    </td>
-
-                    <td>
-                        {{ $check->incidents }}
-                    </td>
-
-                </tr>
-
-            @empty
-
-                <tr>
-
-                    <td colspan="2"
-                        class="empty">
-
-                        No incidents detected.
-
-                    </td>
-
-                </tr>
-
-            @endforelse
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-    <div class="section">
-
-        <h2>🚨 Incident Log</h2>
-
-        <table>
-
-            <thead>
-
-            <tr>
-
-                <th>
-                    Check
-                </th>
-
-                <th>
-                    Status
-                </th>
-
-                <th>
-                    Summary
-                </th>
-
-                <th>
-                    Notification
-                </th>
-
-                <th>
-                    Time
-                </th>
-
-            </tr>
-
-            </thead>
-
-            <tbody>
-
-            @forelse($incidents as $incident)
-
-                @php
+                    @php
 
                     $statusClass =
-                        $incident->status === 'failed'
-                        ? 'failed'
-                        : 'warning';
+                    $incident->status === 'failed'
+                    ? 'failed'
+                    : 'warning';
 
-                @endphp
+                    @endphp
 
-                <tr>
 
-                    <td>
-                        {{ $incident->check_label }}
-                    </td>
+                    <tr>
 
-                    <td>
+                        <td>
+                            {{ $incident->check_label }}
+                        </td>
 
-                        <span class="status {{ $statusClass }}">
-                            {{ strtoupper($incident->status) }}
-                        </span>
+                        <td>
 
-                    </td>
+                            <span
+                                class="status {{ $statusClass }}">
 
-                    <td>
-                        {{ $incident->short_summary ?? '-' }}
-                    </td>
+                                {{ strtoupper($incident->status) }}
 
-                    <td>
-                        {{ $incident->notification_message ?? '-' }}
-                    </td>
+                            </span>
 
-                    <td>
-                        {{ $incident->ended_at }}
-                    </td>
+                        </td>
 
-                </tr>
+                        <td>
+                            {{ $incident->short_summary ?? '-' }}
+                        </td>
 
-            @empty
+                        <td>
+                            {{ $incident->notification_message ?? '-' }}
+                        </td>
 
-                <tr>
+                        <td>
+                            {{ $incident->ended_at }}
+                        </td>
 
-                    <td colspan="5"
-                        class="empty">
+                    </tr>
 
-                        ✅ No health incidents found for
-                        the selected period.
+                    @empty
 
-                    </td>
+                    <tr>
 
-                </tr>
+                        <td
+                            colspan="5"
+                            class="empty">
 
-            @endforelse
+                            ✅ No health incidents found for
+                            the selected period.
 
-            </tbody>
+                        </td>
 
-        </table>
+                    </tr>
 
-        <div class="pagination">
+                    @endforelse
 
-            {{ $incidents->links() }}
+                </tbody>
+
+            </table>
+
+
+            <div class="pagination">
+
+                {{ $incidents->links() }}
+
+            </div>
 
         </div>
 
     </div>
-
-</div>
 
 </body>
 
