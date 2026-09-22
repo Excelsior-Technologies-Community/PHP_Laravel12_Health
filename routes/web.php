@@ -5,23 +5,118 @@ use App\Http\Controllers\HealthController;
 use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
 use Spatie\Health\Http\Controllers\HealthCheckResultsController;
 
-// Main Health Dashboard
-Route::get('/health', [HealthController::class, 'index']);
 
-// Spatie JSON health endpoint
-Route::get('/health-json', HealthCheckJsonResultsController::class);
+/*
+|--------------------------------------------------------------------------
+| Main Health Dashboard
+|--------------------------------------------------------------------------
+*/
 
-// Default Spatie Health Dashboard
-Route::get('/health-dashboard', HealthCheckResultsController::class);
+Route::get('/health', [
+    HealthController::class,
+    'index'
+])->name('health');
 
-// Health History & Statistics
-Route::get('/health-history', [HealthController::class, 'history']);
 
-// Health Incident & Failure Log
-Route::get('/health-incidents', [HealthController::class, 'incidents']);
+/*
+|--------------------------------------------------------------------------
+| Manual Health Check
+|--------------------------------------------------------------------------
+*/
 
-// System Resource Health Monitoring
-Route::get('/health-system', [HealthController::class, 'system']);
+Route::post('/health/run-check', [
+    HealthController::class,
+    'runCheck'
+])->name('health.run');
 
-// System Monitoring JSON endpoint
-Route::get('/health-system-json', [HealthController::class, 'systemJson']);
+
+/*
+|--------------------------------------------------------------------------
+| Spatie JSON Health Endpoint
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/health-json', HealthCheckJsonResultsController::class)
+    ->name('health.json');
+
+
+/*
+|--------------------------------------------------------------------------
+| Default Spatie Health Dashboard
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/health-dashboard', HealthCheckResultsController::class)
+    ->name('health.spatie');
+
+
+/*
+|--------------------------------------------------------------------------
+| Health History
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/health-history', [
+    HealthController::class,
+    'history'
+])->name('health.history');
+
+
+/*
+|--------------------------------------------------------------------------
+| Export Health History
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/health-history/export', [
+    HealthController::class,
+    'exportHistory'
+])->name('health.history.export');
+
+
+/*
+|--------------------------------------------------------------------------
+| Health Incidents
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/health-incidents', [
+    HealthController::class,
+    'incidents'
+])->name('health.incidents');
+
+
+/*
+|--------------------------------------------------------------------------
+| Export Health Incidents
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/health-incidents/export', [
+    HealthController::class,
+    'exportIncidents'
+])->name('health.incidents.export');
+
+
+/*
+|--------------------------------------------------------------------------
+| System Resource Health
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/health-system', [
+    HealthController::class,
+    'system'
+])->name('health.system');
+
+
+/*
+|--------------------------------------------------------------------------
+| System Monitoring JSON
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/health-system-json', [
+    HealthController::class,
+    'systemJson'
+])->name('health.system.json');
