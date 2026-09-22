@@ -5,13 +5,13 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
+    <meta
+        name="viewport"
         content="width=device-width, initial-scale=1.0">
 
     <title>Health History & Statistics</title>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
@@ -60,9 +60,19 @@
             margin-bottom: 20px;
         }
 
+        .filter-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(200px, 1fr));
+
+            gap: 10px;
+        }
+
+        input,
         select,
         button {
-            padding: 9px 12px;
+            width: 100%;
+            padding: 10px 12px;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
         }
@@ -71,6 +81,16 @@
             background: #0f172a;
             color: white;
             cursor: pointer;
+        }
+
+        .export {
+            display: inline-block;
+            text-decoration: none;
+            background: #16a34a;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 7px;
+            margin-top: 12px;
         }
 
         .stats {
@@ -86,7 +106,7 @@
             background: white;
             padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
         }
 
         .stat-title {
@@ -167,326 +187,444 @@
             padding: 30px;
             color: #64748b;
         }
-
     </style>
 
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <h1>📊 Health History & Statistics</h1>
+        <h1>📊 Health History & Statistics</h1>
 
-    <div class="subtitle">
-        Historical application health monitoring
-    </div>
-
-    <div class="navigation">
-
-        <a href="/health">
-            🏠 Current Health
-        </a>
-
-        <a href="/health-history">
-            📊 History
-        </a>
-
-        <a href="/health-incidents">
-            🚨 Incidents
-        </a>
-
-        <a href="/health-system">
-            🖥️ System Monitor
-        </a>
-
-    </div>
-
-    <div class="filter">
-
-        <form method="GET"
-            action="/health-history">
-
-            <label>
-                History Period:
-            </label>
-
-            <select name="days">
-
-                <option value="1"
-                    {{ $days == 1 ? 'selected' : '' }}>
-                    Last 1 Day
-                </option>
-
-                <option value="3"
-                    {{ $days == 3 ? 'selected' : '' }}>
-                    Last 3 Days
-                </option>
-
-                <option value="5"
-                    {{ $days == 5 ? 'selected' : '' }}>
-                    Last 5 Days
-                </option>
-
-                <option value="7"
-                    {{ $days == 7 ? 'selected' : '' }}>
-                    Last 7 Days
-                </option>
-
-                <option value="30"
-                    {{ $days == 30 ? 'selected' : '' }}>
-                    Last 30 Days
-                </option>
-
-            </select>
-
-            <button type="submit">
-                Apply
-            </button>
-
-        </form>
-
-    </div>
-
-    <div class="stats">
-
-        <div class="stat">
-            <div class="stat-title">
-                Total Checks
-            </div>
-
-            <div class="stat-value">
-                {{ $totalChecks }}
-            </div>
+        <div class="subtitle">
+            Historical application health monitoring
         </div>
 
-        <div class="stat">
-            <div class="stat-title">
-                Successful Checks
-            </div>
 
-            <div class="stat-value">
-                {{ $successfulChecks }}
-            </div>
+        <div class="navigation">
+
+            <a href="/health">
+                🏠 Current Health
+            </a>
+
+            <a href="/health-history">
+                📊 History
+            </a>
+
+            <a href="/health-incidents">
+                🚨 Incidents
+            </a>
+
+            <a href="/health-system">
+                🖥️ System Monitor
+            </a>
+
         </div>
 
-        <div class="stat">
-            <div class="stat-title">
-                Failed Checks
+
+
+
+        {{-- Statistics --}}
+
+        <div class="stats">
+
+            <div class="stat">
+
+                <div class="stat-title">
+                    Total Checks
+                </div>
+
+                <div class="stat-value">
+                    {{ $totalChecks }}
+                </div>
+
             </div>
 
-            <div class="stat-value">
-                {{ $failedChecks }}
+
+            <div class="stat">
+
+                <div class="stat-title">
+                    Successful Checks
+                </div>
+
+                <div class="stat-value">
+                    {{ $successfulChecks }}
+                </div>
+
             </div>
+
+
+            <div class="stat">
+
+                <div class="stat-title">
+                    Failed Checks
+                </div>
+
+                <div class="stat-value">
+                    {{ $failedChecks }}
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-title">
+                    Warnings
+                </div>
+
+                <div class="stat-value">
+                    {{ $warningChecks }}
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-title">
+                    Success Rate
+                </div>
+
+                <div class="stat-value">
+                    {{ $successRate }}%
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-title">
+                    Failure Rate
+                </div>
+
+                <div class="stat-value">
+                    {{ $failureRate }}%
+                </div>
+
+            </div>
+
         </div>
 
-        <div class="stat">
-            <div class="stat-title">
-                Warnings
-            </div>
 
-            <div class="stat-value">
-                {{ $warningChecks }}
-            </div>
+        {{-- Check Statistics --}}
+
+        <div class="section">
+
+            <h2>
+                📈 Check Statistics
+            </h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Health Check
+                        </th>
+
+                        <th>
+                            Total
+                        </th>
+
+                        <th>
+                            Successful
+                        </th>
+
+                        <th>
+                            Failed
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @forelse($checkStatistics as $stat)
+
+                    <tr>
+
+                        <td>
+                            {{ $stat->check_label }}
+                        </td>
+
+                        <td>
+                            {{ $stat->total }}
+                        </td>
+
+                        <td>
+                            {{ $stat->successful }}
+                        </td>
+
+                        <td>
+                            {{ $stat->failed }}
+                        </td>
+
+                    </tr>
+
+                    @empty
+
+                    <tr>
+
+                        <td
+                            colspan="4"
+                            class="empty">
+
+                            No health history available.
+
+                        </td>
+
+                    </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
+
         </div>
 
-        <div class="stat">
-            <div class="stat-title">
-                Success Rate
-            </div>
+        {{-- Filters --}}
 
-            <div class="stat-value">
-                {{ $successRate }}%
-            </div>
+        <div class="filter">
+
+            <form
+                method="GET"
+                action="{{ route('health.history') }}">
+
+                <div class="filter-grid">
+
+                    <div>
+
+                        <label>
+                            Period
+                        </label>
+
+                        <select name="days">
+
+                            @foreach([1, 3, 5, 7, 30] as $period)
+
+                            <option
+                                value="{{ $period }}"
+                                {{ $days == $period ? 'selected' : '' }}>
+
+                                Last {{ $period }} Day{{ $period > 1 ? 's' : '' }}
+
+                            </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+
+                    <div>
+
+                        <label>
+                            Search
+                        </label>
+
+                        <input
+                            type="text"
+                            name="search"
+                            value="{{ $search }}"
+                            placeholder="Search checks...">
+
+                    </div>
+
+
+                    <div>
+
+                        <label>
+                            Status
+                        </label>
+
+                        <select name="status">
+
+                            <option
+                                value="all"
+                                {{ $status === 'all' ? 'selected' : '' }}>
+
+                                All
+
+                            </option>
+
+                            <option
+                                value="ok"
+                                {{ $status === 'ok' ? 'selected' : '' }}>
+
+                                OK
+
+                            </option>
+
+                            <option
+                                value="failed"
+                                {{ $status === 'failed' ? 'selected' : '' }}>
+
+                                Failed
+
+                            </option>
+
+                            <option
+                                value="warning"
+                                {{ $status === 'warning' ? 'selected' : '' }}>
+
+                                Warning
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div>
+
+                        <label>
+                            &nbsp;
+                        </label>
+
+                        <button type="submit">
+                            🔎 Apply Filters
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+
+            <a
+                class="export"
+                href="{{ route('health.history.export', ['days' => $days]) }}">
+
+                📥 Export History CSV
+
+            </a>
+
         </div>
 
-        <div class="stat">
-            <div class="stat-title">
-                Failure Rate
-            </div>
 
-            <div class="stat-value">
-                {{ $failureRate }}%
-            </div>
-        </div>
 
-    </div>
+        {{-- History --}}
 
-    <div class="section">
+        <div class="section">
 
-        <h2>📈 Check Statistics</h2>
+            <h2>
+                🕒 Health Check History
+            </h2>
 
-        <table>
+            <table>
 
-            <thead>
+                <thead>
 
-            <tr>
+                    <tr>
 
-                <th>
-                    Health Check
-                </th>
+                        <th>
+                            Check
+                        </th>
 
-                <th>
-                    Total
-                </th>
+                        <th>
+                            Status
+                        </th>
 
-                <th>
-                    Successful
-                </th>
+                        <th>
+                            Summary
+                        </th>
 
-                <th>
-                    Failed
-                </th>
+                        <th>
+                            Completed
+                        </th>
 
-            </tr>
+                    </tr>
 
-            </thead>
+                </thead>
 
-            <tbody>
 
-            @forelse($checkStatistics as $stat)
+                <tbody>
 
-                <tr>
+                    @forelse($history as $item)
 
-                    <td>
-                        {{ $stat->check_label }}
-                    </td>
-
-                    <td>
-                        {{ $stat->total }}
-                    </td>
-
-                    <td>
-                        {{ $stat->successful }}
-                    </td>
-
-                    <td>
-                        {{ $stat->failed }}
-                    </td>
-
-                </tr>
-
-            @empty
-
-                <tr>
-
-                    <td colspan="4"
-                        class="empty">
-
-                        No health history available.
-
-                    </td>
-
-                </tr>
-
-            @endforelse
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-    <div class="section">
-
-        <h2>🕒 Health Check History</h2>
-
-        <table>
-
-            <thead>
-
-            <tr>
-
-                <th>
-                    Check
-                </th>
-
-                <th>
-                    Status
-                </th>
-
-                <th>
-                    Summary
-                </th>
-
-                <th>
-                    Completed
-                </th>
-
-            </tr>
-
-            </thead>
-
-            <tbody>
-
-            @forelse($history as $item)
-
-                @php
+                    @php
 
                     $statusClass = 'warning';
 
                     if ($item->status === 'ok') {
-                        $statusClass = 'ok';
+                    $statusClass = 'ok';
                     }
 
                     if ($item->status === 'failed') {
-                        $statusClass = 'failed';
+                    $statusClass = 'failed';
                     }
 
-                @endphp
+                    @endphp
 
-                <tr>
 
-                    <td>
-                        {{ $item->check_label }}
-                    </td>
+                    <tr>
 
-                    <td>
+                        <td>
+                            {{ $item->check_label }}
+                        </td>
 
-                        <span class="status {{ $statusClass }}">
-                            {{ strtoupper($item->status) }}
-                        </span>
+                        <td>
 
-                    </td>
+                            <span
+                                class="status {{ $statusClass }}">
 
-                    <td>
-                        {{ $item->short_summary ?? '-' }}
-                    </td>
+                                {{ strtoupper($item->status) }}
 
-                    <td>
-                        {{ $item->ended_at }}
-                    </td>
+                            </span>
 
-                </tr>
+                        </td>
 
-            @empty
+                        <td>
+                            {{ $item->short_summary ?? '-' }}
+                        </td>
 
-                <tr>
+                        <td>
+                            {{ $item->ended_at }}
+                        </td>
 
-                    <td colspan="4"
-                        class="empty">
+                    </tr>
 
-                        No health check history found.
+                    @empty
 
-                    </td>
+                    <tr>
 
-                </tr>
+                        <td
+                            colspan="4"
+                            class="empty">
 
-            @endforelse
+                            No health check history found.
 
-            </tbody>
+                        </td>
 
-        </table>
+                    </tr>
 
-        <div class="pagination">
+                    @endforelse
 
-            {{ $history->links() }}
+                </tbody>
+
+            </table>
+
+
+            <div class="pagination">
+
+                {{ $history->links() }}
+
+            </div>
 
         </div>
 
     </div>
-
-</div>
 
 </body>
 
