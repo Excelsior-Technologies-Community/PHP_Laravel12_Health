@@ -6,6 +6,10 @@ use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
 use Spatie\Health\Http\Controllers\HealthCheckResultsController;
 
 
+Route::get('/', function () {
+    return redirect()->route('health');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Main Health Dashboard
@@ -120,3 +124,59 @@ Route::get('/health-system-json', [
     HealthController::class,
     'systemJson'
 ])->name('health.system.json');
+
+
+/*
+|--------------------------------------------------------------------------
+| Real-Time Log Viewer & Health Diagnostics Inspector
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/health-logs', [
+    HealthController::class,
+    'logs'
+])->name('health.logs');
+
+Route::post('/health-logs/clear', [
+    HealthController::class,
+    'clearLogs'
+])->name('health.logs.clear');
+
+
+/*
+|--------------------------------------------------------------------------
+| Live Synthetic Health Stress-Tester & Chaos Simulator
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/health-chaos', [
+    HealthController::class,
+    'chaos'
+])->name('health.chaos');
+
+Route::post('/health-chaos/trigger', [
+    HealthController::class,
+    'triggerChaos'
+])->name('health.chaos.trigger');
+
+Route::post('/health-chaos/reset', [
+    HealthController::class,
+    'resetChaos'
+])->name('health.chaos.reset');
+
+
+/*
+|--------------------------------------------------------------------------
+| Real-Time Server Resource Gauges & Performance Analytics
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/health-gauges', [
+    HealthController::class,
+    'gauges'
+])->name('health.gauges');
+
+Route::get('/health-gauges-json', [
+    HealthController::class,
+    'gaugesJson'
+])->name('health.gauges.json');
