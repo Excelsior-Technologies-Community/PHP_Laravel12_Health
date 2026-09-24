@@ -215,6 +215,18 @@
                 🖥️ System Monitor
             </a>
 
+            <a href="/health-logs">
+                📜 Log Inspector
+            </a>
+
+            <a href="/health-chaos">
+                ⚡ Chaos Simulator
+            </a>
+
+            <a href="/health-gauges">
+                📊 Resource Gauges
+            </a>
+
         </div>
 
 
